@@ -1,1 +1,139 @@
-<p>Hello</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResumeXpert</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    header {
+      background-color: #2c3e50;
+      color: white;
+      text-align: center;
+      padding: 1em;
+    }
+
+    .container {
+      display: flex;
+      flex: 1;
+    }
+
+    .sidebar {
+      width: 250px;
+      background-color: #34495e;
+      color: white;
+      padding: 1em;
+      transition: all 0.3s;
+      border-top-right-radius: 20px;
+      border-bottom-right-radius: 20px;
+    }
+
+    .sidebar.closed {
+      width: 60px;
+    }
+
+    .sidebar-toggle {
+      background-color: #1abc9c;
+      border: none;
+      color: white;
+      padding: 0.5em 1em;
+      cursor: pointer;
+      margin-bottom: 1em;
+      border-radius: 10px;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .sidebar-symbol {
+      font-size: 24px;
+      margin-right: 10px;
+    }
+
+    .sidebar-text {
+      display: inline;
+      transition: opacity 0.3s;
+    }
+
+    .sidebar.closed .sidebar-text {
+      display: none;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 2em;
+      background-color: #ecf0f1;
+    }
+
+    .upload-box {
+      background-color: white;
+      padding: 2em;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      max-width: 400px;
+      margin: auto;
+    }
+
+    .upload-box input[type="file"] {
+      width: 100%;
+    }
+
+    footer {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ResumeXpert</h1>
+  </header>
+
+  <div class="container">
+    <div class="sidebar" id="sidebar">
+      <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+      <div class="sidebar-item">
+        <span class="sidebar-symbol">📄</span>
+        <span class="sidebar-text">Documents</span>
+      </div>
+      <div class="sidebar-item">
+        <span class="sidebar-symbol">⚙️</span>
+        <span class="sidebar-text">Settings</span>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="upload-box">
+        <h2>Upload Your PDF Resume</h2>
+        <input type="file" accept="application/pdf">
+      </div>
+    </div>
+  </div>
+
+  <footer id="footer">
+    <p>&copy; 2025 ResumeXpert. All rights reserved.</p>
+  </footer>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('closed');
+    }
+  </script>
+</body>
+</html>
