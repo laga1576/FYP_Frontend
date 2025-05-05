@@ -127,7 +127,7 @@ textarea {
     justify-content: space-between;
 }
 
-.upload-btn, .analyze-btn {
+.process-btn {
     background-color: #b4c5e4;
     border: none;
     padding: 10px 20px;

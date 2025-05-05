@@ -3,48 +3,68 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ResumeXpert Analyzer</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; max-width: 700px; margin: auto; }
-    label, input, textarea, button { display: block; width: 100%; margin-top: 10px; }
-    #analysis { margin-top: 20px; }
-    .result-box {
-      border: 1px solid #ccc;
-      background: #f8f8f8;
-      border-radius: 8px;
-      padding: 15px;
-      margin-top: 20px;
-    }
-    ul { padding-left: 20px; }
-  </style>
+  <title>ResumeXpert</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <header class="header">
+    <img src="ResumeXpert.png" alt="ResumeXpert Logo" class="logo">
+    <h1 class="title">RESUMEXPERT</h1>
+  </header>
 
-  <h2>Upload Resume and Job Description</h2>
+  <main class="main-content">
+    <div class="circle-icon">
+      <img src="logo.png" alt="Search Icon">
+    </div>
 
-  <form id="uploadForm">
-    <label for="file">Select Resume (PDF):</label>
-    <input type="file" id="file" name="file" accept="application/pdf" required />
+    <div class="upload-container">
+      <div class="upload-section">
+        <label for="resume">UPLOAD (PDF):</label>
+        <div class="upload-box">
+          <p>Drop your resume here<br>or choose a file.</p>
+          <input type="file" id="resume" accept="application/pdf">
+        </div>
+      </div>
 
-    <label for="job_desc">Job Description:</label>
-    <textarea id="job_desc" name="job_desc" rows="4" required></textarea>
+      <div class="file-info-box" id="file-info-box">
+        <p id="file-name"></p>
+      </div>
 
-    <button type="submit">Upload and Analyze</button>
-  </form>
+      <div class="job-description-section">
+        <label for="job-description">JOB DESCRIPTION:</label>
+        <textarea id="job-description" placeholder="Enter job description here..."></textarea>
+      </div>
 
-  <div id="analysis"></div>
+      <div class="button-group">
+        <button class="process-btn">Upload & Analyze</button>
+      </div>
+    </div>
+
+    <div id="analysis-output" class="result-box"></div>
+  </main>
+
+  <footer class="footer">
+    © ResumeXpert 2025. All rights reserved.
+  </footer>
 
   <script>
-    document.getElementById("uploadForm").addEventListener("submit", async function (e) {
-      e.preventDefault();
+    document.getElementById("resume").addEventListener("change", function () {
+      const file = this.files[0];
+      document.getElementById("file-name").textContent = file ? file.name : "";
+    });
 
-      const fileInput = document.getElementById("file");
-      const jobDesc = document.getElementById("job_desc").value;
-      const resultsDiv = document.getElementById("analysis");
-      resultsDiv.innerHTML = "Processing...";
+    document.querySelector(".process-btn").addEventListener("click", async function () {
+      const fileInput = document.getElementById("resume");
+      const jobDesc = document.getElementById("job-description").value;
+      const outputDiv = document.getElementById("analysis-output");
 
-      if (fileInput.files.length === 0) {
-        alert("Please select a file.");
+      if (!fileInput.files.length) {
+        alert("Please select a PDF file.");
+        return;
+      }
+
+      if (!jobDesc.trim()) {
+        alert("Please enter a job description.");
         return;
       }
 
@@ -52,8 +72,9 @@
       formData.append("file", fileInput.files[0]);
       formData.append("job_desc", jobDesc);
 
+      outputDiv.innerHTML = "Processing...";
+
       try {
-        // POST to /upload
         const uploadRes = await fetch("https://resumexpert-dev.onrender.com/upload", {
           method: "POST",
           body: formData
@@ -61,7 +82,6 @@
 
         const uploadData = await uploadRes.json();
 
-        // POST to /analyze
         const analyzeRes = await fetch("https://resumexpert-dev.onrender.com/analyze", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -70,11 +90,9 @@
 
         const analysis = await analyzeRes.json();
 
-        // Build result output
-        resultsDiv.innerHTML = `
-          <div class="result-box">
+        outputDiv.innerHTML = `
+          <div>
             <h2>Analysis Results</h2>
-
             <ol>
               <li>
                 <strong>Career Recommendations:</strong>
@@ -85,17 +103,16 @@
                   </li>
                   <li><strong>Other Careers:</strong>
                     <ul>
-                      ${(analysis.career_recommendations?.other_careers || []).map(career => `
+                      ${(analysis.career_recommendations?.other_careers || []).map(c => `
                         <li>
-                          Title: ${career.title}<br>
-                          Reason: ${career.reason}
+                          Title: ${c.title}<br>
+                          Reason: ${c.reason}
                         </li>
                       `).join('')}
                     </ul>
                   </li>
                 </ul>
               </li>
-
               <li><strong>Extra Keywords to Add:</strong> ${(analysis.extra_keywords_to_add || []).join(', ')}</li>
               <li><strong>Match Score:</strong> ${analysis.match_score ?? 'N/A'}</li>
               <li><strong>Missing Keywords:</strong> ${(analysis.missing_keywords || []).join(', ')}</li>
@@ -113,12 +130,10 @@
             </ol>
           </div>
         `;
-
       } catch (err) {
-        resultsDiv.innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
+        outputDiv.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
       }
     });
   </script>
-
 </body>
 </html>
