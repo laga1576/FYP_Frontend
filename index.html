@@ -1,142 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ResumeXpert</title>
-    <link rel="stylesheet" href="style.css">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ResumeXpert Uploader</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    label, input, textarea, button { display: block; width: 100%; margin-top: 10px; }
+    #response, #analysis { white-space: pre-wrap; background: #f9f9f9; padding: 10px; margin-top: 20px; border: 1px solid #ccc; }
+  </style>
 </head>
 <body>
-    <header class="header">
-        <img src="ResumeXpert.png" alt="ResumeXpert Logo" class="logo">
-        <h1 class="title">RESUMEXPERT</h1>
-    </header>
 
-    <main class="main-content">
-        <div class="circle-icon">
-            <img src="logo.png" alt="Search Icon">
-        </div>
+  <h2>Upload Resume and Job Description</h2>
 
-        <div class="upload-container">
-            <div class="upload-section">
-                <label for="resume">UPLOAD (PDF):</label>
-                <div class="upload-box">
-                    <p>Drop your resume here<br>or choose a file.</p>
-                    <input type="file" id="resume" accept="application/pdf">
-                </div>
-            </div>
+  <form id="uploadForm">
+    <label for="file">Select Resume (PDF):</label>
+    <input type="file" id="file" name="file" accept="application/pdf" required />
 
-            <div class="file-info-box" id="file-info-box">
-              <p id="file-name"></p>
-          </div>
+    <label for="job_desc">Job Description:</label>
+    <textarea id="job_desc" name="job_desc" rows="4" required></textarea>
 
-            <div class="job-description-section">
-                <label for="job-description">JOB DESCRIPTION:</label>
-                <textarea id="job-description" placeholder="Enter job description here..."></textarea>
-            </div>
+    <button type="submit">Upload and Analyze</button>
+  </form>
 
-            <div class="button-group">
-                <button class="upload-btn">Upload</button>
-                <button class="analyze-btn">Analyze</button>
-            </div>
-        </div>
-    </main>
-
-    <footer class="footer">
-      © ResumeXpert 2025. All rights reserved.
-  </footer>
-
-  <div class="results" id="results"></div>
+  <div id="response"><strong>Upload Response:</strong><br></div>
+  <div id="analysis"><strong>Analysis Result:</strong><br></div>
 
   <script>
-    document.querySelector('.analyze-btn').addEventListener('click', async () => {
-      const resultsDiv = document.getElementById('results');
-      resultsDiv.innerHTML = 'Analyzing...';
+    document.getElementById("uploadForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
   
-      const resumeFile = document.getElementById('resume').files[0];
-      const jobDescription = document.getElementById('job-description').value.trim();
+      const fileInput = document.getElementById("file");
+      const jobDesc = document.getElementById("job_desc").value;
   
-      // Validate input
-      if (!resumeFile || resumeFile.type !== 'application/pdf') {
-        alert('Please upload a valid PDF resume.');
-        resultsDiv.innerHTML = '';
-        return;
-      }
-  
-      if (!jobDescription) {
-        alert('Please enter a job description.');
-        resultsDiv.innerHTML = '';
+      if (fileInput.files.length === 0) {
+        alert("Please select a file.");
         return;
       }
   
       const formData = new FormData();
-      formData.append('file', resumeFile);
+      formData.append("file", fileInput.files[0]);
+      formData.append("job_desc", jobDesc);
   
       try {
-        // Step 1: Upload resume and get extracted text
-        const uploadRes = await fetch('https://resumexpert-dev.onrender.com/upload', {
-          method: 'POST',
+        // POST to /upload
+        const uploadRes = await fetch("https://resumexpert-dev.onrender.com/upload", {
+          method: "POST",
           body: formData
         });
   
-        const uploadText = await uploadRes.text();
-        console.log('Raw upload response:', uploadText);
+        const uploadData = await uploadRes.json();  // ✅ PARSE JSON from /upload
   
-        if (!uploadRes.ok) throw new Error('Upload failed');
+        document.getElementById("response").innerHTML += JSON.stringify(uploadData, null, 2);
   
-        let uploadData;
-        try {
-          uploadData = JSON.parse(uploadText);
-        } catch {
-          throw new Error('Invalid response format from upload');
-        }
-  
-        const resumeText = uploadData.resume_text;
-        if (!resumeText) throw new Error('No resume text returned');
-  
-        // Step 2: Analyze resume against job description
-        const analyzeRes = await fetch('https://resumexpert-dev.onrender.com/analyze', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            job_description: jobDescription,
-            resume_text: resumeText
-          })
+        // POST to /analyze with the full uploadData as body
+        const analyzeRes = await fetch("https://resumexpert-dev.onrender.com/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(uploadData)  // ✅ send full JSON
         });
   
-        const analyzeText = await analyzeRes.text();
-        console.log('Raw analyze response:', analyzeText);
+        const analyzeResult = await analyzeRes.json();  // also expect JSON here
+        document.getElementById("analysis").innerHTML += JSON.stringify(analyzeResult, null, 2);
   
-        if (!analyzeRes.ok) throw new Error('Analysis failed');
-  
-        const analysis = JSON.parse(analyzeText);
-  
-        // Step 3: Display result
-        resultsDiv.innerHTML = `
-          <div style="border: 1px solid #ccc; padding: 15px; margin-top: 20px; background: #f8f8f8; border-radius: 8px;">
-            <h2>Analysis Results</h2>
-            <p><strong>Match Score:</strong> ${analysis.match_score ?? 'N/A'}</p>
-            <p><strong>Extra Keywords to Add:</strong> ${(analysis.extra_keywords || []).join(', ')}</p>
-            <p><strong>Missing Keywords:</strong> ${(analysis.missing_keywords || []).join(', ')}</p>
-            <h3>Suggested Improvements:</h3>
-            <ul>
-              ${(analysis.suggestions || []).map(s => `
-                <li>
-                  <strong>Issue:</strong> ${s.issue}<br>
-                  <strong>Suggestion:</strong> ${s.suggestion}
-                </li>
-              `).join('')}
-            </ul>
-          </div>
-        `;
-  
-      } catch (error) {
-        console.error(error);
-        resultsDiv.innerHTML = `<p style="color:red;">An error occurred: ${error.message}</p>`;
+      } catch (err) {
+        document.getElementById("response").innerHTML += "<br>Error: " + err;
+        document.getElementById("analysis").innerHTML += "<br>Error: " + err;
       }
     });
   </script>
   
-  
+
 </body>
 </html>
