@@ -52,88 +52,101 @@
       const file = this.files[0];
       document.getElementById("file-name").textContent = file ? file.name : "";
     });
-
+  
     document.querySelector(".process-btn").addEventListener("click", async function () {
       const fileInput = document.getElementById("resume");
       const jobDesc = document.getElementById("job-description").value;
       const outputDiv = document.getElementById("analysis-output");
-
+  
       if (!fileInput.files.length) {
         alert("Please select a PDF file.");
         return;
       }
-
+  
       if (!jobDesc.trim()) {
         alert("Please enter a job description.");
         return;
       }
-
+  
       const formData = new FormData();
       formData.append("file", fileInput.files[0]);
       formData.append("job_desc", jobDesc);
-
-      outputDiv.innerHTML = "Processing...";
-
+  
+      outputDiv.innerHTML = `<div class="card loading">Processing...</div>`;
+  
       try {
         const uploadRes = await fetch("https://resumexpert-dev.onrender.com/upload", {
           method: "POST",
           body: formData
         });
-
+  
         const uploadData = await uploadRes.json();
-
+  
         const analyzeRes = await fetch("https://resumexpert-dev.onrender.com/analyze", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(uploadData)
         });
-
+  
         const analysis = await analyzeRes.json();
-
+  
         outputDiv.innerHTML = `
-          <div>
-            <h2>Analysis Results</h2>
-            <ol>
-              <li>
-                <strong>Career Recommendations:</strong>
+          <div class="card result-card">
+            <h2 class="section-title">Analysis Results</h2>
+  
+            <div class="result-section">
+              <h3>1. Career Recommendations</h3>
+              <div class="result-subsection">
+                <p><strong>Best Match:</strong></p>
+                <p>Title: ${analysis.career_recommendations?.best_match?.title || 'N/A'}</p>
+                <p>Reason: ${analysis.career_recommendations?.best_match?.reason || 'N/A'}</p>
+              </div>
+              <div class="result-subsection">
+                <p><strong>Other Careers:</strong></p>
                 <ul>
-                  <li><strong>Best Match:</strong><br>
-                    Title: ${analysis.career_recommendations?.best_match?.title || 'N/A'}<br>
-                    Reason: ${analysis.career_recommendations?.best_match?.reason || 'N/A'}
-                  </li>
-                  <li><strong>Other Careers:</strong>
-                    <ul>
-                      ${(analysis.career_recommendations?.other_careers || []).map(c => `
-                        <li>
-                          Title: ${c.title}<br>
-                          Reason: ${c.reason}
-                        </li>
-                      `).join('')}
-                    </ul>
-                  </li>
-                </ul>
-              </li>
-              <li><strong>Extra Keywords to Add:</strong> ${(analysis.extra_keywords_to_add || []).join(', ')}</li>
-              <li><strong>Match Score:</strong> ${analysis.match_score ?? 'N/A'}</li>
-              <li><strong>Missing Keywords:</strong> ${(analysis.missing_keywords || []).join(', ')}</li>
-              <li>
-                <strong>Suggested Improvements:</strong>
-                <ul>
-                  ${(analysis.suggested_improvements || []).map(s => `
+                  ${(analysis.career_recommendations?.other_careers || []).map(c => `
                     <li>
-                      <strong>Issue:</strong> ${s.issue}<br>
-                      <strong>Suggestion:</strong> ${s.suggestion}
+                      <p><strong>Title:</strong> ${c.title}</p>
+                      <p><strong>Reason:</strong> ${c.reason}</p>
                     </li>
                   `).join('')}
                 </ul>
-              </li>
-            </ol>
+              </div>
+            </div>
+  
+            <div class="result-section">
+              <h3>2. Extra Keywords to Add</h3>
+              <p>${(analysis.extra_keywords_to_add || []).join(', ') || 'None'}</p>
+            </div>
+  
+            <div class="result-section">
+              <h3>3. Match Score</h3>
+              <p>${analysis.match_score ?? 'N/A'}%</p>
+            </div>
+  
+            <div class="result-section">
+              <h3>4. Missing Keywords</h3>
+              <p>${(analysis.missing_keywords || []).join(', ') || 'None'}</p>
+            </div>
+  
+            <div class="result-section">
+              <h3>5. Suggested Improvements</h3>
+              <ul>
+                ${(analysis.suggested_improvements || []).map(s => `
+                  <li>
+                    <p><strong>Issue:</strong> ${s.issue}</p>
+                    <p><strong>Suggestion:</strong> ${s.suggestion}</p>
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
           </div>
         `;
       } catch (err) {
-        outputDiv.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
+        outputDiv.innerHTML = `<div class="card error">Error: ${err.message}</div>`;
       }
     });
   </script>
+  
 </body>
 </html>
