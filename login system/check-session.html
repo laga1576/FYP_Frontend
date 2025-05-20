@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button id="check-session-button" onclick="checkSession()">Check Session</button>
+    <p id="status"></p>
+
+    <script>
+        function checkSession() {
+            fetch("http://localhost:5000/api/check-session",{
+                credentials: "include"
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.loggedIn) {
+                    document.getElementById("status").innerHTML = `Logged in as ${data.username}`;
+                }
+                else{
+                    document.getElementById("status").innerHTML = "Not logged in";
+                }
+            });
+        }
+    </script>
+</body>
+</html>
