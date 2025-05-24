@@ -1,11 +1,36 @@
-function showLoginMessage() {
-    // Hide all content except the navbar
+// Hide all content by default
+function hideAllContent() {
     const mainContent = document.querySelector('main');
     if (mainContent) mainContent.style.display = 'none';
     
     const footer = document.querySelector('.footer');
     if (footer) footer.style.display = 'none';
+}
 
+// Show loading state
+function showLoadingState() {
+    const loadingDiv = document.createElement('div');
+    loadingDiv.id = 'auth-loading';
+    loadingDiv.style.position = 'fixed';
+    loadingDiv.style.top = '50%';
+    loadingDiv.style.left = '50%';
+    loadingDiv.style.transform = 'translate(-50%, -50%)';
+    loadingDiv.style.backgroundColor = '#ffffff';
+    loadingDiv.style.padding = '20px';
+    loadingDiv.style.borderRadius = '5px';
+    loadingDiv.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+    loadingDiv.style.zIndex = '1000';
+    loadingDiv.style.textAlign = 'center';
+    loadingDiv.innerHTML = `
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Verifying authentication...</p>
+    `;
+    document.body.appendChild(loadingDiv);
+}
+
+function showLoginMessage() {
     const messageDiv = document.createElement('div');
     messageDiv.style.position = 'fixed';
     messageDiv.style.top = '50%';
@@ -25,6 +50,17 @@ function showLoginMessage() {
     document.body.appendChild(messageDiv);
 }
 
+function showContent() {
+    const mainContent = document.querySelector('main');
+    if (mainContent) mainContent.style.display = 'block';
+    
+    const footer = document.querySelector('.footer');
+    if (footer) footer.style.display = 'block';
+
+    const loadingDiv = document.getElementById('auth-loading');
+    if (loadingDiv) loadingDiv.remove();
+}
+
 async function checkAuth() {
     try {
         const response = await fetch('https://resumexpert-dev.onrender.com/api/check-session', {
@@ -40,6 +76,7 @@ async function checkAuth() {
             }, 2000);
             return false;
         }
+        showContent();
         return true;
     } catch (error) {
         console.error('Auth check failed:', error);
@@ -51,12 +88,9 @@ async function checkAuth() {
     }
 }
 
-// Check auth immediately when script loads
+// Initialize auth check when script loads
 document.addEventListener('DOMContentLoaded', () => {
-    checkAuth().then(isAuthenticated => {
-        if (!isAuthenticated) {
-            // Prevent any further page initialization
-            return;
-        }
-    });
+    hideAllContent();
+    showLoadingState();
+    checkAuth();
 }); 

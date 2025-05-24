@@ -44,5 +44,23 @@ async function handleLogout() {
     window.location.href = '/login system/logout.html';
 }
 
+// Function to handle ranking link click
+async function handleRankingClick(e) {
+    try {
+        const response = await fetch('https://resumexpert-dev.onrender.com/api/check-session', {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        
+        if (!data.loggedIn) {
+            e.preventDefault();
+            alert('To use ranking features you must log in first');
+            window.location.href = '/login system/login.html';
+        }
+    } catch (error) {
+        console.error('Error checking session:', error);
+    }
+}
+
 // Load navbar when DOM is ready
 document.addEventListener('DOMContentLoaded', loadNavbar); 
