@@ -697,3 +697,64 @@ li {
     transform: rotate(360deg);
   }
 }
+
+.result-screen {
+      padding: 50px;
+      color: white;
+      text-align: center;
+    }
+
+    .result-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .score-box, .keyword-box, .suggestions-box, .careers-box {
+      background-color: #181818;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: left;
+    }
+
+    .score-bar {
+      font-size: 2rem;
+      color: #fff;
+      border: 2px solid #a64eff;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .progress {
+      height: 6px;
+      background: linear-gradient(to right, #2d00f7, #a100f2);
+      margin-top: 10px;
+      border-radius: 3px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      background: linear-gradient(to right, #2d00f7, #a100f2);
+      border-radius: 20px;
+      color: white;
+      font-size: 13px;
+      margin: 5px;
+    }
+
+    .job-listings-button-container {
+      margin-top: 30px;
+    }
+
+    .btn-gradient {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 25px;
+      background: linear-gradient(to right, #2d00f7, #a100f2);
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }

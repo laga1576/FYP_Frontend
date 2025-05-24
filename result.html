@@ -1,40 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ResumeExpert – Result</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analyzed Result</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background-color: #0a0a0a;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+    }
+
+    .result-screen {
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .result-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      max-width: 1000px;
+      margin: 0 auto;
+      gap: 30px;
+    }
+
+    .box {
+      background-color: #181818;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: left;
+    }
+
+    .score-box {
+      text-align: center;
+      padding: 20px;
+      border: 2px solid #a100f2;
+      border-radius: 12px;
+    }
+
+    .score-value {
+      font-size: 40px;
+      font-weight: bold;
+      background: linear-gradient(to right, #6e00ff, #00c3ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .progress-bar {
+      background-color: #333;
+      border-radius: 5px;
+      height: 8px;
+      margin-top: 10px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(to right, #6e00ff, #00c3ff);
+    }
+
+    .tag {
+      display: inline-block;
+      background: linear-gradient(to right, #6e00ff, #a100f2);
+      padding: 5px 12px;
+      margin: 5px 5px 0 0;
+      border-radius: 16px;
+      font-size: 12px;
+    }
+
+    .btn-gradient {
+      margin-top: 40px;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 25px;
+      background: linear-gradient(to right, #2d00f7, #a100f2);
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
 </head>
-<body>
-  <header>
-    <div class="nav-container">
-      <div class="logo">ResumeExpert</div>
-      <nav>
-        <a href="index.html">Home</a>
-        <a href="upload.html" class="active">Analyzer</a>
-        <a href="ranking/job-ranking.html">Ranking</a>
-        <a href="#">About</a>
-      </nav>
-      <div class="auth-buttons">
-        <a href="#" class="login">Log In</a>
-        <a href="#" class="signup">Sign Up</a>
+<body class="dark-theme">
+
+  <!-- Navbar (Optional) -->
+  <nav class="navbar">
+    <div class="nav-left">
+      <img src="ResumeXpert.png" alt="ResumeXpert Logo" class="logo">
+      <span class="brand">ResumeExpert</span>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="upload.html" class="active">Analyzer</a></li>
+        <li><a href="ranking/job-ranking.html">Ranking</a></li>
+        <li><a href="#">About</a></li>
+      </ul>
+    </div>
+    <div class="nav-right">
+      <a href="login system/login.html" class="login-btn">Log In</a>
+      <a href="#" class="signup-btn">Sign Up</a>
+    </div>
+  </nav>
+
+  <!-- Result Screen -->
+  <section class="result-screen">
+    <h2>Analyzed result</h2>
+
+    <div class="result-layout">
+
+      <!-- Left Column -->
+      <div>
+        <div class="score-box">
+          <p>Match Score</p>
+          <div class="score-value" id="scoreValue">75%</div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 75%;"></div>
+          </div>
+        </div>
+
+        <div class="box">
+          <h4>Missing Keywords</h4>
+          <div id="missingKeywords">...</div>
+        </div>
+
+        <div class="box">
+          <h4>Keywords to add</h4>
+          <div id="extraKeywords">...</div>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div>
+        <div class="box">
+          <h4 style="color: #b065ff;">Suggested Improvements</h4>
+          <div id="suggestions">...</div>
+        </div>
+
+        <div class="box">
+          <h4 style="color: #b065ff;">Careers</h4>
+          <div id="careers">...</div>
+        </div>
       </div>
     </div>
-  </header>
 
-  <main>
-    <h1 class="main-title">Analyzed result</h1>
+    <button class="btn-gradient" onclick="window.location.href='jobListing.html';">
+      View Job Listings
+    </button>
+  </section>
 
-    <section id="analysis-output">
-      <!-- Populated by JS -->
-    </section>
+  <footer class="footer">
+    © ResumeExpert 2025. All rights reserved.
+  </footer>
 
-    <div class="button-wrapper">
-      <a href="jobListing.html" class="cta-button">View Job Listings</a>
-    </div>
-  </main>
+  <script>
+    const analysis = JSON.parse(localStorage.getItem("analysisResult"));
+    const jobData = JSON.parse(localStorage.getItem("jobMatchResult"));
 
-  <script src="main.js"></script>
+    if (analysis) {
+      // Match Score
+      document.getElementById("scoreValue").textContent = `${analysis.match_score || 0}%`;
+      document.getElementById("progressFill").style.width = `${analysis.match_score || 0}%`;
+
+      // Missing Keywords
+      document.getElementById("missingKeywords").innerHTML =
+        (analysis.missing_keywords || []).map(kw => `<span class="tag">${kw}</span>`).join("") || "None";
+
+      // Extra Keywords
+      document.getElementById("extraKeywords").innerHTML =
+        (analysis.extra_keywords_to_add || []).map(kw => `<span class="tag">${kw}</span>`).join("") || "None";
+
+      // Suggestions
+      document.getElementById("suggestions").innerHTML =
+        (analysis.suggested_improvements || []).map(s =>
+          `<p><strong>${s.issue}</strong><br>&bull; ${s.suggestion}</p>`
+        ).join("") || "None";
+
+      // Careers
+      const best = analysis.career_recommendations?.best_match;
+      const others = analysis.career_recommendations?.other_careers || [];
+
+      document.getElementById("careers").innerHTML = `
+        <p><strong>Best match</strong><br>&bull; ${best?.title || 'N/A'}<br><strong>Reason</strong><br>&bull; ${best?.reason || 'N/A'}</p>
+        <p><strong>Others Career you might like</strong><br>
+          ${others.map(c => `&bull; ${c.title}<br>&nbsp;&nbsp;&nbsp;&bull; ${c.reason}`).join('<br>') || 'None'}
+        </p>
+      `;
+    } else {
+      document.querySelector(".result-screen").innerHTML = "<p>No result found. Please analyze a resume first.</p>";
+    }
+  </script>
 </body>
 </html>

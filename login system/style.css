@@ -697,3 +697,142 @@ li {
     transform: rotate(360deg);
   }
 }
+
+
+
+/* Login Section */
+h1 {
+  text-align: center;
+  margin-top: 100px;
+  font-size: 2.5rem;
+}
+
+input[type="text"],
+input[type="password"] {
+  display: block;
+  width: 300px;
+  margin: 15px auto;
+  padding: 10px;
+  background-color: transparent;
+  border: 1px solid #888;
+  border-radius: 5px;
+  color: white;
+}
+
+input::placeholder {
+  color: #888;
+}
+
+#login-button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 0;
+  width: 150px;
+  background: linear-gradient(to right, #2d00f7, #a100f2);
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#login-button:hover {
+  opacity: 0.9;
+}
+
+#status {
+  text-align: center;
+  color: #f0f0f0;
+  margin-top: 10px;
+}
+
+
+section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 220px; /* Avoid overlap with footer */
+}
+
+/* Footer Styles */
+.footer {
+  text-align: center;
+  padding: 15px 0;
+  background-color: #121212;
+  color: #999;
+  font-size: 0.9rem;
+  position: relative;
+}
+/* Input Group */
+.input-group {
+  width: 300px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Label */
+.input-group label {
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  background: linear-gradient(to right, #6e00ff, #00c3ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Input Field */
+.input-group input {
+  padding: 12px;
+  background-color: transparent;
+  border: 1px solid #555;
+  border-radius: 8px;
+  font-size: 15px;
+  color: white;
+  outline: none;
+}
+
+.input-group input::placeholder {
+  color: #777;
+}
+
+body {
+      margin: 0;
+      background-color: #0a0a0a;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .logout-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 80vh;
+      text-align: center;
+    }
+
+    .logout-icon {
+      font-size: 60px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .logout-message {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    .redirect-note {
+      color: #777;
+      font-size: 1rem;
+    }
+
+    .logout-image {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
