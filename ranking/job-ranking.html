@@ -3,46 +3,39 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ResumeExpert – Upload</title>
+  <title>ResumeExpert – Job Ranking</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="dark-theme">
+  <!-- Navbar placeholder -->
+  <div id="navbar-placeholder"></div>
 
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="nav-left">
-      <img src="ResumeXpert.png" alt="ResumeXpert Logo" class="logo">
-      <span class="brand">ResumeExpert</span>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="upload.html" class="active">Analyzer</a></li>
-        <li><a href="ranking/job-ranking.html">Ranking</a></li>
-        <li><a href="#">About</a></li>
-      </ul>
-    </div>
-    <div class="nav-right">
-      <a href="login system/login.html" class="login-btn">Log In</a>
-      <a href="#" class="signup-btn">Sign Up</a>
-    </div>
-  </nav>
+  <div style="margin-bottom: 20px;">
+    <button onclick="window.location.href='view-jobs.html'">Back to Jobs</button>
+    <button onclick="window.location.href='resumes-ranking.html?jobId=' + jobId">+ Add Resume</button>
+  </div>
+  <h1>Job Rankings</h1>
+  <div id="jobTitle"></div>
+  <div id="rankingsList"></div>
 
+  <footer class="footer">
+    Copyright © 2025 | All Rights Reserved
+  </footer>
 
-    <div style="margin-bottom: 20px;">
-        <button onclick="window.location.href='view-jobs.html'">Back to Jobs</button>
-        <button onclick="window.location.href='resumes-ranking.html?jobId=' + jobId">+ Add Resume</button>
-    </div>
-    <h1>Job Rankings</h1>
-    <div id="jobTitle"></div>
-    <div id="rankingsList"></div>
+  <script src="../navbar.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    // Get job ID from URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const jobId = urlParams.get('jobId');
 
-    <script>
-        // Get job ID from URL parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        const jobId = urlParams.get('jobId');
+    if (!jobId) {
+        document.body.innerHTML = '<h1>Error: No job ID provided</h1>';
+    } else {
+        // Check authentication first
+        checkAuth().then(isAuthenticated => {
+            if (!isAuthenticated) return;
 
-        if (!jobId) {
-            document.body.innerHTML = '<h1>Error: No job ID provided</h1>';
-        } else {
             // Fetch rankings data
             fetch(`https://resumexpert-dev.onrender.com/api/jobs/${jobId}/rankings`, {
                 credentials: 'include'
@@ -80,7 +73,8 @@
                     console.error('Error:', error);
                     document.body.innerHTML = '<h1>Error loading rankings</h1>';
                 });
-        }
-    </script>
+        });
+    }
+  </script>
 </body>
 </html>

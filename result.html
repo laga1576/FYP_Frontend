@@ -83,31 +83,14 @@
   </style>
 </head>
 <body class="dark-theme">
-
-  <!-- Navbar (Optional) -->
-  <nav class="navbar">
-    <div class="nav-left">
-      <img src="ResumeXpert.png" alt="ResumeXpert Logo" class="logo">
-      <span class="brand">ResumeExpert</span>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="upload.html" class="active">Analyzer</a></li>
-        <li><a href="ranking/job-ranking.html">Ranking</a></li>
-        <li><a href="#">About</a></li>
-      </ul>
-    </div>
-    <div class="nav-right">
-      <a href="login system/login.html" class="login-btn">Log In</a>
-      <a href="#" class="signup-btn">Sign Up</a>
-    </div>
-  </nav>
+  <!-- Navbar placeholder -->
+  <div id="navbar-placeholder"></div>
 
   <!-- Result Screen -->
   <section class="result-screen">
     <h2>Analyzed result</h2>
 
     <div class="result-layout">
-
       <!-- Left Column -->
       <div>
         <div class="score-box">
@@ -152,6 +135,7 @@
     © ResumeExpert 2025. All rights reserved.
   </footer>
 
+  <script src="navbar.js"></script>
   <script>
     const analysis = JSON.parse(localStorage.getItem("analysisResult"));
     const jobData = JSON.parse(localStorage.getItem("jobMatchResult"));

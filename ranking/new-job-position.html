@@ -4,27 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Post New Job</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-    <h1>Post New Job</h1>
-    <form id="jobForm">
-        <div>
-            <label for="title">Job Title:</label><br>
-            <input type="text" id="title" name="title" required>
-        </div>
-        <br>
-        <div>
-            <label for="description">Job Description:</label><br>
-            <textarea id="description" name="description" rows="6" required></textarea>
-        </div>
-        <br>
-        <button type="submit">Post Job</button>
-    </form>
-    <div id="message"></div>
+<body class="dark-theme">
+    <!-- Navbar placeholder -->
+    <div id="navbar-placeholder"></div>
 
+    <main class="container">
+        <h1>Post New Job</h1>
+        <form id="jobForm">
+            <div class="input-group">
+                <label for="title">Job Title:</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+
+            <div class="input-group">
+                <label for="description">Job Description:</label>
+                <textarea id="description" name="description" rows="6" required></textarea>
+            </div>
+
+            <button type="submit">Post Job</button>
+        </form>
+        <div id="message"></div>
+    </main>
+
+    <footer class="footer">
+        Copyright © 2025 | All Rights Reserved
+    </footer>
+
+    <script src="../navbar.js"></script>
+    <script src="auth.js"></script>
     <script>
         document.getElementById('jobForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            // Check authentication first
+            const isAuthenticated = await checkAuth();
+            if (!isAuthenticated) return;
+
             const messageDiv = document.getElementById('message');
             
             const title = document.getElementById('title').value;
@@ -47,8 +64,11 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    messageDiv.textContent = 'Job posted successfully!';
+                    messageDiv.textContent = 'Job posted successfully! Redirecting...';
                     document.getElementById('jobForm').reset();
+                    setTimeout(() => {
+                        window.location.href = 'view-jobs.html';
+                    }, 3000);
                 } else {
                     messageDiv.textContent = data.message || 'Failed to post job';
                 }

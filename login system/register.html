@@ -4,16 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-    <h1>Register</h1>
-    <input type="text" id="reg-username" placeholder="Username">
-    <br>
-    <input type="password" id="reg-password" placeholder="Password">
-    <br>
-    <button id="reg-button" onclick="register()">Register</button>
-    <pre id="response"></pre>
+<body class="dark-theme">
+    <!-- Navbar placeholder -->
+    <div id="navbar-placeholder"></div>
 
+    <section class="login-form">
+        <h1>Register</h1>
+        <form>
+            <div class="input-group">
+                <label for="reg-username">Username</label>
+                <input type="text" id="reg-username" placeholder="Enter username" required>
+            </div>
+
+            <div class="input-group">
+                <label for="reg-password">Password</label>
+                <input type="password" id="reg-password" placeholder="Enter password" required>
+            </div>
+
+            <button id="reg-button" type="button" onclick="register()">Register</button>
+            <p id="response" style="margin-top: 15px; padding: 10px; border-radius: 5px; text-align: center; font-weight: 500;"></p>
+        </form>
+    </section>
+
+    <footer class="footer">
+        Copyright © 2025 | All Rights Reserved
+    </footer>
+
+    <script src="/navbar.js"></script>
     <script>
         function register() {
             const username = document.getElementById("reg-username").value;
@@ -28,10 +47,26 @@
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById("response").textContent = JSON.stringify(data, null, 2);
+                const responseElement = document.getElementById("response");
+                responseElement.textContent = data.message || data.error;
+                
+                if (data.message === 'User registered successfully') {
+                    responseElement.style.backgroundColor = '#4CAF50';
+                    responseElement.style.color = 'white';
+                    // Wait 3 seconds before redirecting
+                    setTimeout(() => {
+                        window.location.href = "login.html";
+                    }, 3000);
+                } else {
+                    responseElement.style.backgroundColor = '#f44336';
+                    responseElement.style.color = 'white';
+                }
             })
             .catch(error => {
-                document.getElementById("response").textContent = "Error: " + error.message;
+                const responseElement = document.getElementById("response");
+                responseElement.textContent = "Error: " + error.message;
+                responseElement.style.backgroundColor = '#f44336';
+                responseElement.style.color = 'white';
             });
         }
     </script>

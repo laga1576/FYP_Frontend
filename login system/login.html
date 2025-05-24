@@ -7,47 +7,33 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="dark-theme">
-
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="nav-left">
-      <img src="ResumeXpert.png" alt="ResumeXpert Logo" class="logo">
-      <span class="brand">ResumeExpert</span>
-      <ul class="nav-links">
-        <li><a href="index.html" class="active">Home</a></li>
-        <li><a href="upload.html">Analyzer</a></li>
-        <li><a href="ranking/job-ranking.html">Ranking</a></li>
-        <li><a href="#">About</a></li>
-      </ul>
-    </div>
-    <div class="nav-right">
-      <a href="login.html" class="login-btn">Log In</a>
-      <a href="signup.html" class="signup-btn">Sign Up</a>
-    </div>
-  </nav>
+  <!-- Navbar placeholder -->
+  <div id="navbar-placeholder"></div>
 
   <!-- Login Form -->
   <section class="login-form">
     <h1>Login</h1>
-  <form>
-    <div class="input-group">
-      <label for="login-username">Username</label>
-      <input type="text" id="login-username" placeholder="Enter your username" required>
-    </div>
+    <form>
+      <div class="input-group">
+        <label for="login-username">Username</label>
+        <input type="text" id="login-username" placeholder="Enter your username" required>
+      </div>
 
-    <div class="input-group">
-      <label for="login-password">Password</label>
-      <input type="password" id="login-password" placeholder="Enter your password" required>
-    </div>
+      <div class="input-group">
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" placeholder="Enter your password" required>
+      </div>
 
-    <button id="login-button" type="button" onclick="login()">Login</button>
-    <p id="status"></p>
-  </form>
-</section>
+      <button id="login-button" type="button" onclick="login()">Login</button>
+      <p id="status"></p>
+    </form>
+  </section>
 
+  <footer class="footer">
+    Copyright © 2025 | All Rights Reserved
+  </footer>
 
-
-  <!-- Script -->
+  <script src="../navbar.js"></script>
   <script>
     function login() {
       const username = document.getElementById("login-username").value;
@@ -63,14 +49,15 @@
       })
       .then(response => response.json())
       .then(data => {
-        document.getElementById("status").innerHTML = data.message || data.error;
+        if (data.message) {
+          // Successful login
+          window.location.href = "/index.html";
+        } else {
+          // Show error message
+          document.getElementById("status").innerHTML = data.error;
+        }
       });
     }
   </script>
-
-<footer class="footer">
-    Copyright © 2025 | All Rights Reserved
-  </footer>
-
 </body>
 </html>

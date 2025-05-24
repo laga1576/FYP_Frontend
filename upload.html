@@ -7,24 +7,8 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="dark-theme">
-
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="nav-left">
-      <img src="ResumeXpert.png" alt="ResumeXpert Logo" class="logo">
-      <span class="brand">ResumeExpert</span>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="upload.html" class="active">Analyzer</a></li>
-        <li><a href="ranking/job-ranking.html">Ranking</a></li>
-        <li><a href="#">About</a></li>
-      </ul>
-    </div>
-    <div class="nav-right">
-      <a href="login system/login.html" class="login-btn">Log In</a>
-      <a href="#" class="signup-btn">Sign Up</a>
-    </div>
-  </nav>
+  <!-- Navbar placeholder -->
+  <div id="navbar-placeholder"></div>
 
   <!-- Upload Section -->
   <main class="upload-section">
@@ -38,6 +22,7 @@
         </div>
         <div class="file-info-box">
           <p id="file-name"></p>
+          <button id="remove-file" style="display: none;">x</button>
         </div>
       </div>
 
@@ -62,7 +47,7 @@
     © ResumeExpert 2025. All rights reserved.
   </footer>
 
-  <!-- Script -->
+  <script src="navbar.js"></script>
   <script>
   const resumeInput = document.getElementById("resume");
   const jobDescInput = document.getElementById("job-description");
@@ -70,10 +55,24 @@
   const fileNameDisplay = document.getElementById("file-name");
   const analysisOutput = document.getElementById("analysis-output");
   const loadingOverlay = document.getElementById("loading-overlay");
+  const removeFileBtn = document.getElementById("remove-file");
 
   resumeInput.addEventListener("change", () => {
     const file = resumeInput.files[0];
     fileNameDisplay.textContent = file ? file.name : "";
+    if (file) {
+      resumeInput.style.display = "none";
+      removeFileBtn.style.display = "inline";
+      document.querySelector(".drop-box p").textContent = "File uploaded successfully!";
+    }
+  });
+
+  removeFileBtn.addEventListener("click", () => {
+    resumeInput.value = "";
+    fileNameDisplay.textContent = "";
+    resumeInput.style.display = "block";
+    removeFileBtn.style.display = "none";
+    document.querySelector(".drop-box p").textContent = "Drop your resume here or choose a file.";
   });
 
   analyzeBtn.addEventListener("click", async () => {

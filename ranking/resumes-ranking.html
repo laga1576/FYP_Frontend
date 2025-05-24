@@ -4,31 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resume Ranking</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-    <h1>Upload Resumes for Ranking</h1>
-    
-    <div id="jobInfo"></div>
-    <div id="uploadForm" style="display: none;">
-        <form id="resumeUploadForm" enctype="multipart/form-data">
-            <div>
-                <label for="resumeFiles">Select PDF Resumes:</label>
-                <input type="file" id="resumeFiles" name="files" multiple accept=".pdf" required>
-            </div>
-            
-            <button type="submit">Upload and Rank Resumes</button>
-        </form>
-    </div>
+<body class="dark-theme">
+    <!-- Navbar placeholder -->
+    <div id="navbar-placeholder"></div>
 
-    <div id="result"></div>
+    <main class="container">
+        <h1>Upload Resumes for Ranking</h1>
+        
+        <div id="jobInfo"></div>
+        <div id="uploadForm" style="display: none;">
+            <form id="resumeUploadForm" enctype="multipart/form-data">
+                <div class="input-group">
+                    <label for="resumeFiles">Select PDF Resumes:</label>
+                    <input type="file" id="resumeFiles" name="files" multiple accept=".pdf" required>
+                </div>
+                
+                <button type="submit">Upload and Rank Resumes</button>
+            </form>
+        </div>
 
+        <div id="result"></div>
+    </main>
+
+    <footer class="footer">
+        Copyright © 2025 | All Rights Reserved
+    </footer>
+
+    <script src="../navbar.js"></script>
+    <script src="auth.js"></script>
     <script>
         // Function to get job ID from URL
         function getJobIdFromUrl() {
             const urlParams = new URLSearchParams(window.location.search);
-            const jobId = urlParams.get('job_id');
+            const jobId = urlParams.get('job_id') || urlParams.get('jobId');
             if (!jobId) {
-                throw new Error('Job ID not found in URL. Please add ?job_id=YOUR_JOB_ID to the URL.');
+                throw new Error('Job ID not found in URL. Please add ?job_id=YOUR_JOB_ID or ?jobId=YOUR_JOB_ID to the URL.');
             }
             return jobId;
         }
@@ -59,6 +71,10 @@
 
         // Initialize page
         async function initializePage() {
+            // Check authentication first
+            const isAuthenticated = await checkAuth();
+            if (!isAuthenticated) return;
+
             const resultDiv = document.getElementById('result');
             const jobInfoDiv = document.getElementById('jobInfo');
             const uploadForm = document.getElementById('uploadForm');

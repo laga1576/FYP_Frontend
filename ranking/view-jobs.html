@@ -3,18 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Job</title>
+    <title>View Jobs</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-    <h1>Created Jobs</h1>
-    <button class="create-btn" onclick="window.location.href='new-job-position.html'">New Job Ranking</button>
-    
-    <div id="jobsTable">
-        <div class="loading">Loading jobs...</div>
-    </div>
+<body class="dark-theme">
+    <!-- Navbar placeholder -->
+    <div id="navbar-placeholder"></div>
 
+    <main class="container">
+        <h1>Created Jobs</h1>
+        <button class="create-btn" onclick="window.location.href='new-job-position.html'">New Job Ranking</button>
+        
+        <div id="jobsTable">
+            <div class="loading">Loading jobs...</div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        Copyright © 2025 | All Rights Reserved
+    </footer>
+
+    <script src="../navbar.js"></script>
+    <script src="auth.js"></script>
     <script>
         async function fetchJobs() {
+            // Check authentication first
+            const isAuthenticated = await checkAuth();
+            if (!isAuthenticated) return;
+
             try {
                 const response = await fetch('https://resumexpert-dev.onrender.com/api/jobs', {
                     credentials: 'include'  // This will include the session cookie
