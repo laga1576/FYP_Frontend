@@ -17,7 +17,10 @@ body.dark-theme {
 }
 
 .logo {
-    height: 40px;
+    border-radius: 50%; /* Makes the image perfectly round (if it's square) or an oval */
+    width: 40px;    /* Example: Set a fixed width */
+    height: 40px;   /* Example: Set a fixed height to ensure a perfect circle */
+    object-fit: cover; /* Ensures the image covers the area without distortion */
     margin-right: 10px;
 }
 
@@ -657,4 +660,40 @@ li {
   color: white;
   text-decoration: none;
   font-size: 0.8rem;
+}
+
+/* Loading screen */
+#loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(10, 10, 10, 0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  color: white;
+}
+
+#loading-overlay.hidden {
+  display: none;
+}
+
+.spinner {
+  border: 6px solid #333;
+  border-top: 6px solid #a855f7;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
