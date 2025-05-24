@@ -36,11 +36,9 @@
           <p>Drop your resume here or choose a file.</p>
           <input type="file" id="resume" accept="application/pdf" />
         </div>
-        <div class="file-info-box" id="file-info-box">
-        <p id="file-name"></p>
-      </div>
-        <input type="file" id="resume" accept="application/pdf" style="display: none;" />
-        <button class="btn-primary" id="upload-btn">Upload PDF</button>
+        <div class="file-info-box">
+          <p id="file-name"></p>
+        </div>
       </div>
 
       <div class="job-desc-box">
@@ -49,159 +47,153 @@
       </div>
     </div>
     <div class="analyze-button-container">
-      <button class="btn-process">Analyze</button>
+      <button class="btn-process" id="analyze-btn">Analyze</button>
     </div>
     <div id="analysis-output" class="result-output"></div>
   </main>
 
-
+  <!-- Loading Overlay -->
+  <div id="loading-overlay" class="hidden">
+    <div class="spinner"></div>
+    <p>Analyzing resume...</p>
+  </div>
 
   <footer class="footer">
     © ResumeExpert 2025. All rights reserved.
   </footer>
 
+  <!-- Script -->
   <script>
-  const resumeInput = document.getElementById("resume");
-  const jobDescInput = document.getElementById("job-description");
-  const analyzeBtn = document.querySelector(".btn-process");
-  const fileNameDisplay = document.getElementById("file-name");
-  const analysisOutput = document.getElementById("analysis-output");
-  const loadingScreen = document.querySelector(".loading-screen");
-  const resultScreen = document.querySelector(".result-screen");
+    const resumeInput = document.getElementById("resume");
+    const jobDescInput = document.getElementById("job-description");
+    const analyzeBtn = document.getElementById("analyze-btn");
+    const fileNameDisplay = document.getElementById("file-name");
+    const analysisOutput = document.getElementById("analysis-output");
+    const loadingOverlay = document.getElementById("loading-overlay");
 
-  resumeInput.addEventListener("change", function () {
-    const file = this.files[0];
-    fileNameDisplay.textContent = file ? file.name : "";
-  });
+    resumeInput.addEventListener("change", () => {
+      const file = resumeInput.files[0];
+      fileNameDisplay.textContent = file ? file.name : "";
+    });
 
-  analyzeBtn.addEventListener("click", async function () {
-    const file = resumeInput.files[0];
-    const jobDesc = jobDescInput.value.trim();
+    analyzeBtn.addEventListener("click", async () => {
+      const file = resumeInput.files[0];
+      const jobDesc = jobDescInput.value.trim();
 
-    if (!file) {
-      alert("Please select a PDF file.");
-      return;
-    }
-
-    if (!jobDesc) {
-      alert("Please enter a job description.");
-      return;
-    }
-
-    // Show loading screen
-    loadingScreen.style.display = "block";
-    resultScreen.style.display = "none";
-    analysisOutput.innerHTML = "";
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("job_desc", jobDesc);
-
-    try {
-      const uploadRes = await fetch("https://resumexpert-dev.onrender.com/upload", {
-        method: "POST",
-        body: formData
-      });
-
-      const uploadData = await uploadRes.json();
-
-      const analyzeRes = await fetch("https://resumexpert-dev.onrender.com/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(uploadData)
-      });
-
-      const analysis = await analyzeRes.json();
-      const bestMatchTitle = analysis.career_recommendations?.best_match?.title;
-
-      let jobMatchingHTML = "";
-      if (bestMatchTitle) {
-        const jobMatchRes = await fetch("https://resumexpert-dev.onrender.com/job-matching", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ job_title: bestMatchTitle })
-        });
-
-        const jobMatchData = await jobMatchRes.json();
-        const applyOptions = jobMatchData.apply_options || [];
-
-        jobMatchingHTML = `
-          <div class="result-section">
-            <h3>6. Job Application Options for "${bestMatchTitle}"</h3>
-            <ul>
-              ${applyOptions.map(job => `
-                <li>
-                  <p><strong>Publisher:</strong> ${job.publisher}</p>
-                  <p><strong>Apply Link:</strong> <a href="${job.apply_link}" target="_blank">${job.apply_link}</a></p>
-                  <p><strong>Is Direct:</strong> ${job.is_direct ? 'Yes' : 'No'}</p>
-                </li>
-              `).join('')}
-            </ul>
-          </div>
-        `;
+      if (!file) {
+        alert("Please select a PDF file.");
+        return;
+      }
+      if (!jobDesc) {
+        alert("Please enter a job description.");
+        return;
       }
 
-      analysisOutput.innerHTML = `
-        <section class="result-screen" style="display: block;">
-          <h2>Analyzed Result</h2>
-          <div class="result-container">
-            <div class="score-box">
-              <h3>Match Score</h3>
-              <div class="score-bar">
-                <span>${analysis.match_score || 'N/A'}%</span>
-                <div class="progress" style="width: ${analysis.match_score || 0}%;"></div>
-              </div>
-            </div>
+      loadingOverlay.classList.remove("hidden");
+      analysisOutput.innerHTML = "";
 
-            <div class="keyword-box">
-              <h4>Missing Keywords</h4>
-              ${(analysis.missing_keywords || []).map(kw => `<span class="tag">${kw}</span>`).join('') || 'None'}
-            </div>
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("job_desc", jobDesc);
 
-            <div class="keyword-box">
-              <h4>Extra Keywords to Add</h4>
-              ${(analysis.extra_keywords_to_add || []).map(kw => `<span class="tag">${kw}</span>`).join('') || 'None'}
-            </div>
+      try {
+        const uploadRes = await fetch("https://resumexpert-dev.onrender.com/upload", {
+          method: "POST",
+          body: formData
+        });
+        const uploadData = await uploadRes.json();
 
-            <div class="suggestions-box">
-              <h4>Suggested Improvements</h4>
-              ${(analysis.suggested_improvements || []).map(s => `
-                <p><strong>Issue:</strong> ${s.issue}</p>
-                <p><strong>Suggestion:</strong> ${s.suggestion}</p>
-              `).join('') || 'None'}
-            </div>
+        const analyzeRes = await fetch("https://resumexpert-dev.onrender.com/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(uploadData)
+        });
 
-            <div class="careers-box">
-              <h4>Career Recommendations</h4>
-              <p><strong>Best Match:</strong> ${bestMatchTitle || 'N/A'}</p>
-              <p><strong>Reason:</strong> ${analysis.career_recommendations?.best_match?.reason || 'N/A'}</p>
+        const analysis = await analyzeRes.json();
+        const bestMatchTitle = analysis.career_recommendations?.best_match?.title;
 
-              <p><strong>Other Careers:</strong></p>
+        let jobMatchingHTML = "";
+        if (bestMatchTitle) {
+          const jobMatchRes = await fetch("https://resumexpert-dev.onrender.com/job-matching", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ job_title: bestMatchTitle })
+          });
+
+          const jobMatchData = await jobMatchRes.json();
+          const applyOptions = jobMatchData.apply_options || [];
+
+          jobMatchingHTML = `
+            <div class="result-section">
+              <h3>6. Job Application Options for "${bestMatchTitle}"</h3>
               <ul>
-                ${(analysis.career_recommendations?.other_careers || []).map(c => `
-                  <li>${c.title} – ${c.reason}</li>
-                `).join('') || '<li>None</li>'}
+                ${applyOptions.map(job => `
+                  <li>
+                    <p><strong>Publisher:</strong> ${job.publisher}</p>
+                    <p><strong>Apply Link:</strong> <a href="${job.apply_link}" target="_blank">${job.apply_link}</a></p>
+                    <p><strong>Is Direct:</strong> ${job.is_direct ? 'Yes' : 'No'}</p>
+                  </li>
+                `).join('')}
               </ul>
             </div>
+          `;
+        }
 
-            ${jobMatchingHTML}
+        analysisOutput.innerHTML = `
+          <section class="result-screen">
+            <h2>Analyzed Result</h2>
+            <div class="result-container">
+              <div class="score-box">
+                <h3>Match Score</h3>
+                <div class="score-bar">
+                  <span>${analysis.match_score || 'N/A'}%</span>
+                  <div class="progress" style="width: ${analysis.match_score || 0}%;"></div>
+                </div>
+              </div>
 
-            <div class="job-listings-button-container">
-              <button class="btn-gradient" onclick="document.querySelector('.job-listings-screen').style.display = 'block';">View Job Listings</button>
+              <div class="keyword-box">
+                <h4>Missing Keywords</h4>
+                ${(analysis.missing_keywords || []).map(kw => `<span class="tag">${kw}</span>`).join('') || 'None'}
+              </div>
+
+              <div class="keyword-box">
+                <h4>Extra Keywords to Add</h4>
+                ${(analysis.extra_keywords_to_add || []).map(kw => `<span class="tag">${kw}</span>`).join('') || 'None'}
+              </div>
+
+              <div class="suggestions-box">
+                <h4>Suggested Improvements</h4>
+                ${(analysis.suggested_improvements || []).map(s => `
+                  <p><strong>Issue:</strong> ${s.issue}</p>
+                  <p><strong>Suggestion:</strong> ${s.suggestion}</p>
+                `).join('') || 'None'}
+              </div>
+
+              <div class="careers-box">
+                <h4>Career Recommendations</h4>
+                <p><strong>Best Match:</strong> ${bestMatchTitle || 'N/A'}</p>
+                <p><strong>Reason:</strong> ${analysis.career_recommendations?.best_match?.reason || 'N/A'}</p>
+                <ul>
+                  ${(analysis.career_recommendations?.other_careers || []).map(c => `
+                    <li>${c.title} – ${c.reason}</li>
+                  `).join('') || '<li>None</li>'}
+                </ul>
+              </div>
+
+              ${jobMatchingHTML}
+
+              <div class="job-listings-button-container">
+                <button class="btn-gradient" onclick="window.location.href='jobListing.html';">View Job Listings</button>
+              </div>
             </div>
-          </div>
-        </section>
-      `;
-
-    } catch (err) {
-      analysisOutput.innerHTML = `<div class="card error">Error: ${err.message}</div>`;
-    } finally {
-      loadingScreen.style.display = "none";
-    }
-  });
-</script>
-
-
-
+          </section>
+        `;
+      } catch (err) {
+        analysisOutput.innerHTML = `<div class="card error">Error: ${err.message}</div>`;
+      } finally {
+        loadingOverlay.classList.add("hidden");
+      }
+    });
+  </script>
 </body>
 </html>
