@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Rankings</title>
+</head>
+<body>
+    <div style="margin-bottom: 20px;">
+        <button onclick="window.location.href='view-jobs.html'">Back to Jobs</button>
+        <button onclick="window.location.href='resumes-ranking.html?jobId=' + jobId">+ Add Resume</button>
+    </div>
+    <h1>Job Rankings</h1>
+    <div id="jobTitle"></div>
+    <div id="rankingsList"></div>
+
+    <script>
+        // Get job ID from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const jobId = urlParams.get('jobId');
+
+        if (!jobId) {
+            document.body.innerHTML = '<h1>Error: No job ID provided</h1>';
+        } else {
+            // Fetch rankings data
+            fetch(`https://resumexpert-dev.onrender.com/api/jobs/${jobId}/rankings`, {
+                credentials: 'include'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Display job title
+                    document.getElementById('jobTitle').innerHTML = `<h2>${data.job_title}</h2>`;
+
+                    // Create rankings list
+                    const rankingsList = document.getElementById('rankingsList');
+                    if (data.rankings.length === 0) {
+                        rankingsList.innerHTML = '<p>No rankings available</p>';
+                    } else {
+                        const rankingsHTML = data.rankings.map((ranking, index) => `
+                            <div>
+                                <h3>Rank #${index + 1}</h3>
+                                <p><strong>Candidate:</strong> ${ranking.candidate_name}</p>
+                                <p><strong>Score:</strong> ${ranking.score}</p>
+                                <p><strong>Summary:</strong> ${ranking.summary}</p>
+                                <p><strong>Resume:</strong> ${ranking.filename}</p>
+                                <p><strong>Date:</strong> ${new Date(ranking.created_at).toLocaleString()}</p>
+                            </div>
+                            <hr>
+                        `).join('');
+                        rankingsList.innerHTML = rankingsHTML;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.body.innerHTML = '<h1>Error loading rankings</h1>';
+                });
+        }
+    </script>
+</body>
+</html>

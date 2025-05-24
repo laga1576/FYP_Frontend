@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post New Job</title>
+</head>
+<body>
+    <h1>Post New Job</h1>
+    <form id="jobForm">
+        <div>
+            <label for="title">Job Title:</label><br>
+            <input type="text" id="title" name="title" required>
+        </div>
+        <br>
+        <div>
+            <label for="description">Job Description:</label><br>
+            <textarea id="description" name="description" rows="6" required></textarea>
+        </div>
+        <br>
+        <button type="submit">Post Job</button>
+    </form>
+    <div id="message"></div>
+
+    <script>
+        document.getElementById('jobForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const messageDiv = document.getElementById('message');
+            
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            
+            try {
+                const response = await fetch('https://resumexpert-dev.onrender.com/api/jobs', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title,
+                        description
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    messageDiv.textContent = 'Job posted successfully!';
+                    document.getElementById('jobForm').reset();
+                } else {
+                    messageDiv.textContent = data.message || 'Failed to post job';
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Error: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>

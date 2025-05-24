@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Job</title>
+</head>
+<body>
+    <h1>Created Jobs</h1>
+    <button class="create-btn" onclick="window.location.href='new-job-position.html'">New Job Ranking</button>
+    
+    <div id="jobsTable">
+        <div class="loading">Loading jobs...</div>
+    </div>
+
+    <script>
+        async function fetchJobs() {
+            try {
+                const response = await fetch('https://resumexpert-dev.onrender.com/api/jobs', {
+                    credentials: 'include'  // This will include the session cookie
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch jobs');
+                }
+                const data = await response.json();
+                 
+                if (data.jobs.length === 0) {
+                    document.getElementById('jobsTable').innerHTML = '<p>No jobs found</p>';
+                    return;
+                }
+
+                const table = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Created At</th>
+                                <th>Rankings</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.jobs.map(job => `
+                                <tr>
+                                    <td>${job.title}</td>
+                                    <td>${job.description}</td>
+                                    <td>${new Date(job.created_at).toLocaleDateString()}</td>
+                                    <td>${job.rankings_count}</td>
+                                    <td><button onclick="window.location.href='job-ranking.html?jobId=${job.id}'">View Rankings</button></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                
+                document.getElementById('jobsTable').innerHTML = table;
+            } catch (error) {
+                document.getElementById('jobsTable').innerHTML = `
+                    <div class="error">
+                        Error loading jobs: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Fetch jobs when the page loads
+        document.addEventListener('DOMContentLoaded', fetchJobs);
+    </script>
+</body>
+</html>

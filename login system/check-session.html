@@ -11,7 +11,7 @@
 
     <script>
         function checkSession() {
-            fetch("http://localhost:5000/api/check-session",{
+            fetch("https://resumexpert-dev.onrender.com/api/check-session",{
                 credentials: "include"
             })
             .then(response => response.json())

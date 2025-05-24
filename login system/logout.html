@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logout</title>
+</head>
+<body>
+    <h1>Logging out...</h1>
+    <p>You are being logged out. Please wait...</p>
+
+    <script>
+        // Function to handle logout
+        async function logout() {
+            try {
+                const response = await fetch('https://resumexpert-dev.onrender.com/api/logout', {
+                    method: 'GET',
+                    credentials: 'include' // This ensures cookies are sent with the request
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Redirect to login page after successful logout
+                    window.location.href = 'login system/login.html';
+                } else {
+                    alert('Error logging out: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while logging out');
+            }
+        }
+
+        // Call logout function when page loads
+        window.onload = logout;
+    </script>
+</body>
+</html>
